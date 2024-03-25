@@ -230,6 +230,30 @@ jobs:
       target_cpu: arm64
       enable_v8: true
 
+  linux_ppc64le:
+    name: Linux ppc64le
+    uses: ./.github/workflows/build.yml
+    with:
+      branch: ${{ github.event.inputs.branch }}
+      version: ${{ github.event.inputs.version }}
+      is_debug: ${{ github.event.inputs.is_debug == 'true' }}
+      target_os: linux
+      target_cpu: ppc64le
+      enable_v8: false
+
+  linux_ppc64le_v8:
+    name: Linux ppc64le V8
+    if: github.event.inputs.enable_v8 == 'true'
+    needs: linux_ppc64le
+    uses: ./.github/workflows/build.yml
+    with:
+      branch: ${{ github.event.inputs.branch }}
+      version: ${{ github.event.inputs.version }}
+      is_debug: ${{ github.event.inputs.is_debug == 'true' }}
+      target_os: linux
+      target_cpu: ppc64le
+      enable_v8: true
+
   linux_x64:
     name: Linux x64
     uses: ./.github/workflows/build.yml
@@ -527,6 +551,8 @@ jobs:
       - linux_arm_v8
       - linux_arm64
       - linux_arm64_v8
+      - linux_ppc64le
+      - linux_ppc64le_v8
       - linux_x64
       - linux_x64_v8
       - linux_x86
@@ -592,6 +618,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - linux_arm64
+      - linux_ppc64le
       - linux_x64
       - mac_arm64
       - mac_x64
@@ -625,6 +652,8 @@ jobs:
         run: ./conda-build.sh linux-aarch64 pdfium-linux-arm64
       - name: Build for osx-arm64
         run: ./conda-build.sh osx-arm64 pdfium-mac-arm64
+      - name: Build for linux-ppc64le
+        run: ./conda-build.sh linux-ppc64le pdfium-linux-ppc64le
       - name: Build for osx-64
         run: ./conda-build.sh osx-64 pdfium-mac-x64
       - name: Build for win-64
@@ -667,6 +696,8 @@ jobs:
       - ios_x64_v8
       - linux_arm
       - linux_arm_v8
+      - linux_ppc64le
+      - linux_ppc64le_v8
       - linux_arm64
       - linux_arm64_v8
       - linux_musl_arm64
